@@ -34,12 +34,29 @@ clean: ## Clean build artifacts
 	rm -rf artifacts
 	rm -rf cache
 
-test: ## Run tests
+test: ## Run unit tests
 	npm run test
+
+test-watch: ## Run tests in watch mode
+	npm run test:watch
+
+test-coverage: ## Run tests with coverage
+	npm run test:coverage
+
+test-contracts: ## Run smart contract tests
+	npm run test:contracts
+
+test-all: test test-contracts ## Run all tests
 
 lint: ## Run linter
 	npm run lint
 
+type-check: ## Run TypeScript type checking
+	npm run type-check
+
+validate: lint type-check test-all ## Run all validation checks
+
 setup: install compile ## Full project setup
 	@echo "✅ Project setup complete!"
-	@echo "Run 'make dev' to start development server" 
+	@echo "Run 'make dev' to start development server"
+	@echo "Run 'make test' to run tests" 

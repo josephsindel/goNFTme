@@ -3,11 +3,30 @@
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { formatAddress } from '../utils/format'
 import { Wallet, LogOut } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export function ConnectWallet() {
   const { address, isConnected } = useAccount()
   const { connect, connectors, isPending } = useConnect()
   const { disconnect } = useDisconnect()
+  const [mounted, setMounted] = useState(false)
+
+  // Fix hydration by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Prevent hydration mismatch by showing loading state until mounted
+  if (!mounted) {
+    return (
+      <div className="flex items-center space-x-2">
+        <div className="btn-primary flex items-center space-x-2 opacity-50">
+          <Wallet className="w-4 h-4" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    )
+  }
 
   if (isConnected && address) {
     return (
