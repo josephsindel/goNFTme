@@ -31,20 +31,21 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-gradient">GoNFTme</h1>
-              <span className="ml-2 text-sm text-gray-500">Web3 Crowdfunding</span>
+              <span className="ml-2 text-sm text-gray-500 hidden sm:inline">Web3 Crowdfunding</span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link 
                 href="/create"
-                className="btn-primary flex items-center space-x-2"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
-                <span>Create Campaign</span>
+                <span className="hidden sm:inline">Create Campaign</span>
+                <span className="sm:hidden">Create</span>
               </Link>
               <ConnectWallet />
             </div>
@@ -53,52 +54,52 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Crowdfunding with{' '}
             <span className="text-gradient">NFT Rewards</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
             Create campaigns, receive donations, and mint unique NFTs for every contributor. 
             Built on Base blockchain for fast, secure, and affordable transactions.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12">
             <Link 
               href="/create"
-              className="btn-primary px-8 py-3 text-lg flex items-center space-x-2"
+              className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 sm:px-8 py-3 text-lg font-medium rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <Plus className="w-5 h-5" />
               <span>Start Your Campaign</span>
             </Link>
-            <button className="btn-outline px-8 py-3 text-lg">
+            <button className="w-full sm:w-auto border-2 border-gray-300 hover:border-primary-500 text-gray-700 hover:text-primary-600 px-6 sm:px-8 py-3 text-lg font-medium rounded-lg transition-all duration-200 hover:bg-primary-50">
               Learn More
             </button>
           </div>
 
           {/* Features */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center">
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200">
+              <div className="bg-gradient-to-br from-primary-100 to-primary-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Set Your Goal</h3>
-              <p className="text-gray-600">Create campaigns with specific funding goals and track progress in real-time.</p>
+              <h3 className="text-lg font-semibold mb-3 text-gray-900">Set Your Goal</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Create campaigns with specific funding goals and track progress in real-time.</p>
             </div>
-            <div className="text-center">
-              <div className="bg-base-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200">
+              <div className="bg-gradient-to-br from-base-100 to-base-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Users className="w-8 h-8 text-base-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">NFT Rewards</h3>
-              <p className="text-gray-600">Every donation mints a unique NFT with dynamic rarity based on contribution patterns.</p>
+              <h3 className="text-lg font-semibold mb-3 text-gray-900">NFT Rewards</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Every donation mints a unique NFT with dynamic rarity based on contribution patterns.</p>
             </div>
-            <div className="text-center">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200 sm:col-span-2 lg:col-span-1">
+              <div className="bg-gradient-to-br from-green-100 to-emerald-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Calendar className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Instant Funding</h3>
-              <p className="text-gray-600">Receive funds immediately upon donation with transparent, blockchain-verified transactions.</p>
+              <h3 className="text-lg font-semibold mb-3 text-gray-900">Instant Funding</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Receive funds immediately upon donation with transparent, blockchain-verified transactions.</p>
             </div>
           </div>
         </div>

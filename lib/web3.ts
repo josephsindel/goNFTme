@@ -10,10 +10,14 @@ export const config = createConfig({
   connectors: [
     coinbaseWallet({
       appName: 'GoNFTme',
-      appLogoUrl: 'https://goNFTme.com/logo.png', // You can replace with your actual logo
+      appLogoUrl: 'https://goNFTme.com/logo.png',
     }),
     injected(),
-    walletConnect({ projectId }),
+    // Only include WalletConnect if we have a valid project ID
+    ...(projectId && projectId !== 'your_walletconnect_project_id_here' && projectId.length > 10 
+      ? [walletConnect({ projectId })] 
+      : []
+    ),
   ],
   transports: {
     [base.id]: http(),
