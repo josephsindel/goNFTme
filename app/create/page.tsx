@@ -7,6 +7,7 @@ import { base } from 'wagmi/chains'
 import { CreateCampaignForm } from '../../types'
 import { parseEthAmount, isValidAddress } from '../../utils/format'
 import { uploadImageToIPFS, validateImageFile } from '../../utils/ipfs'
+import { campaignSchema, sanitizeString, sanitizeUrl, validateFileUpload } from '../../utils/validation'
 import { ConnectWallet } from '../../components/ConnectWallet'
 import Link from 'next/link'
 import { ArrowLeft, Upload, Wallet, Target, FileText } from 'lucide-react'
@@ -55,9 +56,16 @@ export default function CreateCampaignPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+    
+    // Sanitize input based on field type
+    let sanitizedValue = value
+    if (name === 'title' || name === 'description') {
+      sanitizedValue = sanitizeString(value)
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: sanitizedValue
     }))
   }
 
@@ -65,7 +73,7 @@ export default function CreateCampaignPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const validation = validateImageFile(file)
+    const validation = validateFileUpload(file)
     if (!validation.valid) {
       toast.error(validation.error!)
       return
@@ -89,29 +97,36 @@ export default function CreateCampaignPage() {
       return
     }
 
-    // Validation
-    if (!formData.title.trim()) {
-      toast.error('Please enter a campaign title')
-      return
-    }
-
-    if (!formData.description.trim()) {
-      toast.error('Please enter a campaign description')
-      return
-    }
-
-    if (!formData.goalAmount || parseFloat(formData.goalAmount) <= 0) {
-      toast.error('Please enter a valid goal amount')
-      return
-    }
-
-    if (!isValidAddress(formData.recipientWallet)) {
-      toast.error('Please enter a valid recipient wallet address')
-      return
-    }
-
-    if (!formData.image) {
-      toast.error('Please upload a campaign image')
+    // Comprehensive validation using Zod schema
+    try {
+      const validationData = {
+        title: formData.title,
+        description: formData.description,
+        goalAmount: formData.goalAmount,
+        recipientWallet: formData.recipientWallet,
+        imageUri: formData.image ? 'valid' : undefined
+      }
+      
+      campaignSchema.parse(validationData)
+      
+      if (!formData.image) {
+        toast.error('Please upload a campaign image')
+        return
+      }
+      
+      // Additional file validation
+      const fileValidation = validateFileUpload(formData.image)
+      if (!fileValidation.valid) {
+        toast.error(fileValidation.error!)
+        return
+      }
+      
+    } catch (error: any) {
+      if (error.errors && error.errors.length > 0) {
+        toast.error(error.errors[0].message)
+      } else {
+        toast.error('Please check your input and try again')
+      }
       return
     }
 

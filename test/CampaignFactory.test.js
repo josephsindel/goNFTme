@@ -82,6 +82,56 @@ describe("CampaignFactory", function () {
         )
       ).to.be.revertedWith("Recipient cannot be zero address");
     });
+
+    it("Should reject campaign with goal amount too large", async function () {
+      await expect(
+        campaignFactory.connect(creator).createCampaign(
+          "Test",
+          "Test",
+          "image",
+          ethers.parseEther("1001"), // Over 1000 ETH limit
+          recipient.address
+        )
+      ).to.be.revertedWith("Goal amount too large");
+    });
+
+    it("Should reject campaign with title too long", async function () {
+      const longTitle = "a".repeat(201); // Over 200 char limit
+      await expect(
+        campaignFactory.connect(creator).createCampaign(
+          longTitle,
+          "Test",
+          "image",
+          ethers.parseEther("1.0"),
+          recipient.address
+        )
+      ).to.be.revertedWith("Title too long");
+    });
+
+    it("Should reject campaign with description too long", async function () {
+      const longDescription = "a".repeat(1001); // Over 1000 char limit
+      await expect(
+        campaignFactory.connect(creator).createCampaign(
+          "Test",
+          longDescription,
+          "image",
+          ethers.parseEther("1.0"),
+          recipient.address
+        )
+      ).to.be.revertedWith("Description too long");
+    });
+
+    it("Should reject campaign with contract as recipient", async function () {
+      await expect(
+        campaignFactory.connect(creator).createCampaign(
+          "Test",
+          "Test",
+          "image",
+          ethers.parseEther("1.0"),
+          await campaignFactory.getAddress()
+        )
+      ).to.be.revertedWith("Recipient cannot be contract address");
+    });
   });
 
   describe("Donations", function () {
@@ -224,6 +274,31 @@ describe("CampaignFactory", function () {
       await expect(
         campaignFactory.connect(donor1).donate(campaignId, "uri", { value: 0 })
       ).to.be.revertedWith("Donation amount must be greater than 0");
+    });
+
+    it("Should reject donations that are too large", async function () {
+      await expect(
+        campaignFactory.connect(donor1).donate(campaignId, "uri", { 
+          value: ethers.parseEther("101") // Over 100 ETH limit
+        })
+      ).to.be.revertedWith("Donation amount too large");
+    });
+
+    it("Should reject donations with empty token URI", async function () {
+      await expect(
+        campaignFactory.connect(donor1).donate(campaignId, "", { 
+          value: ethers.parseEther("0.1")
+        })
+      ).to.be.revertedWith("Token URI cannot be empty");
+    });
+
+    it("Should reject donations with token URI too long", async function () {
+      const longUri = "https://example.com/" + "a".repeat(500); // Over 500 char limit
+      await expect(
+        campaignFactory.connect(donor1).donate(campaignId, longUri, { 
+          value: ethers.parseEther("0.1")
+        })
+      ).to.be.revertedWith("Token URI too long");
     });
   });
 

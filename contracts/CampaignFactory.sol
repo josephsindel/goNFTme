@@ -73,8 +73,13 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
         address payable _recipient
     ) external returns (uint256) {
         require(_goalAmount > 0, "Goal amount must be greater than 0");
+        require(_goalAmount <= 1000 ether, "Goal amount too large"); // Prevent unrealistic goals
         require(bytes(_title).length > 0, "Title cannot be empty");
+        require(bytes(_title).length <= 200, "Title too long"); // Prevent gas issues
+        require(bytes(_description).length <= 1000, "Description too long"); // Prevent gas issues
+        require(bytes(_imageUri).length <= 500, "Image URI too long"); // Prevent gas issues
         require(_recipient != address(0), "Recipient cannot be zero address");
+        require(_recipient != address(this), "Recipient cannot be contract address");
         
         uint256 campaignId = _campaignIdCounter;
         _campaignIdCounter++;
@@ -105,7 +110,10 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      */
     function donate(uint256 _campaignId, string memory _tokenUri) external payable nonReentrant {
         require(msg.value > 0, "Donation amount must be greater than 0");
+        require(msg.value <= 100 ether, "Donation amount too large"); // Prevent flash loan attacks
         require(_campaignId < _campaignIdCounter, "Campaign does not exist");
+        require(bytes(_tokenUri).length > 0, "Token URI cannot be empty");
+        require(bytes(_tokenUri).length <= 500, "Token URI too long");
         
         Campaign storage campaign = campaigns[_campaignId];
         require(campaign.isActive, "Campaign is not active");
@@ -117,16 +125,18 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
         
         if (donationAmount > remainingAmount) {
             donationAmount = remainingAmount;
-            // Refund excess
-            payable(msg.sender).transfer(msg.value - donationAmount);
+            // Refund excess using call for better gas handling
+            (bool refundSuccess, ) = payable(msg.sender).call{value: msg.value - donationAmount}("");
+            require(refundSuccess, "Refund failed");
         }
         
         // Update campaign
         campaign.raisedAmount += donationAmount;
         campaign.totalDonors += 1;
         
-        // Transfer funds to recipient
-        campaign.recipient.transfer(donationAmount);
+        // Transfer funds to recipient using call for better gas handling
+        (bool transferSuccess, ) = campaign.recipient.call{value: donationAmount}("");
+        require(transferSuccess, "Transfer to recipient failed");
         
         // Mint NFT
         uint256 tokenId = _tokenIdCounter;

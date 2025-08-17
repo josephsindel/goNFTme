@@ -1,16 +1,15 @@
-module.exports = {
-  extends: [
+const { FlatCompat } = require('@eslint/eslintrc')
+const compat = new FlatCompat()
+
+module.exports = [
+  ...compat.extends(
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
     'plugin:sonarjs/recommended',
     'plugin:security/recommended'
-  ],
-  plugins: [
-    '@typescript-eslint',
-    'sonarjs',
-    'security'
-  ],
-  rules: {
+  ),
+  {
+    rules: {
     // Security rules
     'security/detect-object-injection': 'error',
     'security/detect-non-literal-regexp': 'error',
@@ -58,13 +57,15 @@ module.exports = {
       }
     ]
   },
-  overrides: [
-    {
-      files: ['**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**/*'],
-      rules: {
-        'sonarjs/no-duplicate-string': 'off',
-        '@typescript-eslint/no-explicit-any': 'off'
+      },
+    overrides: [
+      {
+        files: ['**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**/*'],
+        rules: {
+          'sonarjs/no-duplicate-string': 'off',
+          '@typescript-eslint/no-explicit-any': 'off'
+        }
       }
-    }
-  ]
-} 
+    ]
+  }
+] 
