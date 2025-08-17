@@ -75,28 +75,37 @@ export default function HomePage() {
               <Plus className="w-5 h-5" />
               <span>Start Your Campaign</span>
             </Link>
-            <button className="w-full sm:w-auto border-2 border-gray-300 hover:border-primary-500 text-gray-700 hover:text-primary-600 px-6 sm:px-8 py-3 text-lg font-medium rounded-lg transition-all duration-200 hover:bg-primary-50">
+            <button 
+              onClick={() => {
+                // Scroll to features section
+                const featuresSection = document.querySelector('.grid.sm\\:grid-cols-2.lg\\:grid-cols-3')
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
+              className="w-full sm:w-auto border-2 border-gray-300 hover:border-primary-500 text-gray-700 hover:text-primary-600 px-6 sm:px-8 py-3 text-lg font-medium rounded-lg transition-all duration-200 hover:bg-primary-50"
+            >
               Learn More
             </button>
           </div>
 
           {/* Features */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16">
-            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20  transition-all duration-200">
               <div className="bg-gradient-to-br from-primary-100 to-primary-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-3 text-gray-900">Set Your Goal</h3>
               <p className="text-gray-600 text-sm leading-relaxed">Create campaigns with specific funding goals and track progress in real-time.</p>
             </div>
-            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20  transition-all duration-200">
               <div className="bg-gradient-to-br from-base-100 to-base-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Users className="w-8 h-8 text-base-600" />
               </div>
               <h3 className="text-lg font-semibold mb-3 text-gray-900">NFT Rewards</h3>
               <p className="text-gray-600 text-sm leading-relaxed">Every donation mints a unique NFT with dynamic rarity based on contribution patterns.</p>
             </div>
-            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-all duration-200 sm:col-span-2 lg:col-span-1">
+            <div className="text-center p-6 rounded-xl bg-white/50 backdrop-blur-sm border border-white/20  transition-all duration-200 sm:col-span-2 lg:col-span-1">
               <div className="bg-gradient-to-br from-green-100 to-emerald-200 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Calendar className="w-8 h-8 text-green-600" />
               </div>

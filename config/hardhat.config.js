@@ -12,6 +12,12 @@ module.exports = {
       },
     },
   },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./build/cache",
+    artifacts: "./build/artifacts"
+  },
   networks: {
     hardhat: {
       chainId: 1337,

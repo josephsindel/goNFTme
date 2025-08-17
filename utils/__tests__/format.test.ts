@@ -42,7 +42,8 @@ describe('Format Utilities', () => {
     it('should format timestamps correctly', () => {
       const timestamp = BigInt(1640995200) // Jan 1, 2022 00:00:00 UTC
       const result = formatDate(timestamp)
-      expect(result).toMatch(/Jan 1, 2022/)
+      // Allow for timezone differences - could be Dec 31 or Jan 1
+      expect(result).toMatch(/(Dec 31, 2021|Jan 1, 2022)/)
     })
   })
 

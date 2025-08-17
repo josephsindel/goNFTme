@@ -4,7 +4,9 @@ import { formatEther, parseEther } from 'viem'
  * Format ETH amount to readable string
  */
 export function formatEthAmount(wei: bigint): string {
-  return formatEther(wei)
+  const formatted = formatEther(wei)
+  // Ensure at least one decimal place for test consistency
+  return formatted.includes('.') ? formatted : formatted + '.0'
 }
 
 /**

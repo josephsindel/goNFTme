@@ -28,33 +28,33 @@ jest.mock('next/navigation', () => ({
 
 // Mock Wagmi hooks for testing
 jest.mock('wagmi', () => ({
-  useAccount: () => ({
+  useAccount: jest.fn(() => ({
     address: undefined,
     isConnected: false,
-  }),
-  useConnect: () => ({
+  })),
+  useConnect: jest.fn(() => ({
     connect: jest.fn(),
     connectors: [],
     isPending: false,
-  }),
-  useDisconnect: () => ({
+  })),
+  useDisconnect: jest.fn(() => ({
     disconnect: jest.fn(),
-  }),
-  useReadContract: () => ({
+  })),
+  useReadContract: jest.fn(() => ({
     data: undefined,
     isError: false,
     isLoading: false,
-  }),
-  useWriteContract: () => ({
+  })),
+  useWriteContract: jest.fn(() => ({
     writeContract: jest.fn(),
     data: undefined,
     isPending: false,
     error: null,
-  }),
-  useWaitForTransactionReceipt: () => ({
+  })),
+  useWaitForTransactionReceipt: jest.fn(() => ({
     isLoading: false,
     isSuccess: false,
-  }),
+  })),
 }))
 
 // Mock window.matchMedia

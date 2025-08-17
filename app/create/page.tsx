@@ -58,15 +58,10 @@ export default function CreateCampaignPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     
-    // Sanitize input based on field type
-    let sanitizedValue = value
-    if (name === 'title' || name === 'description') {
-      sanitizedValue = sanitizeString(value)
-    }
-    
+    // Only sanitize on blur/submit, not during typing to preserve user experience
     setFormData(prev => ({
       ...prev,
-      [name]: sanitizedValue
+      [name]: value
     }))
   }
 
@@ -98,11 +93,15 @@ export default function CreateCampaignPage() {
       return
     }
 
+    // Sanitize data before validation
+    const sanitizedTitle = sanitizeString(formData.title)
+    const sanitizedDescription = sanitizeString(formData.description)
+    
     // Comprehensive validation using Zod schema
     try {
       const validationData = {
-        title: formData.title,
-        description: formData.description,
+        title: sanitizedTitle,
+        description: sanitizedDescription,
         goalAmount: formData.goalAmount,
         recipientWallet: formData.recipientWallet,
         imageUri: formData.image ? 'valid' : undefined
@@ -154,8 +153,8 @@ export default function CreateCampaignPage() {
         abi: CAMPAIGN_FACTORY_ABI,
         functionName: 'createCampaign',
         args: [
-          formData.title,
-          formData.description,
+          sanitizedTitle,
+          sanitizedDescription,
           imageUri,
           goalInWei,
           formData.recipientWallet as `0x${string}`,

@@ -54,12 +54,12 @@ export const addressSchema = z
 export function sanitizeString(input: string): string {
   if (!input) return ''
   
-  // Remove potential XSS characters
+  // Remove potential XSS characters and patterns
   return input
-    .replace(/[<>]/g, '') // Remove angle brackets
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
     .replace(/javascript:/gi, '') // Remove javascript: protocol
     .replace(/on\w+=/gi, '') // Remove event handlers
-    .replace(/script/gi, '') // Remove script references
+    .replace(/[<>]/g, '') // Remove remaining angle brackets
     .trim()
 }
 
@@ -73,10 +73,13 @@ export function sanitizeUrl(url: string): string {
     return ''
   }
   
-  // Remove potential XSS in URLs
+  // Remove potential XSS in URLs and reject malicious data URLs
+  if (url.toLowerCase().includes('data:text/html') || url.toLowerCase().includes('script')) {
+    return ''
+  }
+  
   return url
     .replace(/javascript:/gi, '')
-    .replace(/data:text\/html/gi, '')
     .replace(/vbscript:/gi, '')
     .trim()
 }

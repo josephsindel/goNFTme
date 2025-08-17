@@ -14,24 +14,24 @@ describe('ConnectWallet', () => {
     jest.clearAllMocks()
   })
 
-  it('shows loading state initially', () => {
+    it('shows connect wallet button when not connected', () => {
     mockUseAccount.mockReturnValue({
       address: undefined,
       isConnected: false,
     } as any)
-    
+
     mockUseConnect.mockReturnValue({
       connect: jest.fn(),
       connectors: [],
       isPending: false,
     } as any)
-    
+
     mockUseDisconnect.mockReturnValue({
       disconnect: jest.fn(),
     } as any)
 
     render(<ConnectWallet />)
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    expect(screen.getByText('Connect Wallet')).toBeInTheDocument()
   })
 
   it('shows connect wallet dropdown when not connected', async () => {

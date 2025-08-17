@@ -20,6 +20,7 @@ start: ## Start production server
 	npm run start
 
 compile: ## Compile smart contracts
+	@echo "🔨 Compiling smart contracts..."
 	npm run compile
 
 deploy-testnet: ## Deploy contracts to Base Sepolia testnet
@@ -82,6 +83,27 @@ sonar-local: ## Run SonarQube with local scanner
 	fi
 
 security-full: security test-coverage sonar-local ## Complete security analysis with coverage
+
+# E2E Testing
+e2e: ## Run E2E tests with Playwright
+	npm run e2e
+
+e2e-headed: ## Run E2E tests with browser UI visible
+	npm run e2e:headed
+
+e2e-ui: ## Open Playwright test UI
+	npm run e2e:ui
+
+e2e-cucumber: ## Run E2E tests with Cucumber BDD
+	npm run e2e:cucumber
+
+e2e-cucumber-headed: ## Run Cucumber E2E tests with browser UI visible
+	npm run e2e:cucumber:headed
+
+e2e-report: ## Show Playwright test report
+	npm run e2e:report
+
+test-e2e: e2e ## Alias for e2e testing
 
 setup: install compile ## Full project setup
 	@echo "✅ Project setup complete!"

@@ -37,9 +37,12 @@ yarn-error.log*
 next-env.d.ts
 
 # Hardhat files
-/cache
-/artifacts
+build/cache
+build/artifacts
 /deployments
+
+# Test reports and coverage
+reports/
 
 # IDE
 .vscode/
@@ -59,10 +62,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
 
 # nyc test coverage
 .nyc_output
