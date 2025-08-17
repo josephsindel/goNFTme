@@ -35,8 +35,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gradient">GoNFTme</h1>
-              <span className="ml-2 text-sm text-gray-500 hidden sm:inline">Web3 Crowdfunding</span>
+              <div className="logo-sparkle">
+                <h1 className="text-2xl logo-text">GoNFTme</h1>
+              </div>
+              <span className="ml-3 text-sm text-gray-500 hidden sm:inline">Web3 Crowdfunding</span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
               <Link 
@@ -58,7 +60,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Crowdfunding with{' '}
-            <span className="text-gradient">NFT Rewards</span>
+            <span className="logo-text">NFT Rewards</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
             Create campaigns, receive donations, and mint unique NFTs for every contributor. 

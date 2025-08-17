@@ -54,4 +54,88 @@
   .shadow-glow {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
   }
+  
+  /* Stylized GoNFTme logo effects */
+  .logo-text {
+    background: linear-gradient(
+      135deg,
+      #667eea 0%,
+      #764ba2 25%,
+      #f093fb 50%,
+      #f5576c 75%,
+      #4facfe 100%
+    );
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s ease-in-out infinite;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  
+  .logo-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.1) 0%,
+      rgba(118, 75, 162, 0.1) 25%,
+      rgba(240, 147, 251, 0.1) 50%,
+      rgba(245, 87, 108, 0.1) 75%,
+      rgba(79, 172, 254, 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-shift 4s ease-in-out infinite;
+    border-radius: 8px;
+    filter: blur(8px);
+    z-index: -1;
+  }
+  
+  .logo-text:hover {
+    animation-duration: 1s;
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  /* NFT sparkle effect for the logo */
+  .logo-sparkle {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .logo-sparkle::after {
+    content: '✨';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 12px;
+    animation: sparkle 2s ease-in-out infinite;
+    opacity: 0.7;
+  }
+  
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0.7;
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2) rotate(180deg);
+    }
+  }
 } 
