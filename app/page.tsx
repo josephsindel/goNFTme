@@ -5,7 +5,7 @@ import { useReadContract } from 'wagmi'
 import { CONTRACT_ADDRESSES, CAMPAIGN_FACTORY_ABI } from '../lib/web3'
 import { base } from 'wagmi/chains'
 import { Campaign } from '../types'
-import { formatEthAmount, formatProgress, formatAddress } from '../utils/format'
+// Utility imports will be used when campaigns are loaded
 import Link from 'next/link'
 import { Plus, Target, Users, Calendar } from 'lucide-react'
 import { ConnectWallet } from '../components/ConnectWallet'

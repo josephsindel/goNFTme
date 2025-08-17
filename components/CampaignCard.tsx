@@ -4,6 +4,7 @@ import { Campaign } from '../types'
 import { formatEthAmount, formatProgress, formatAddress, formatDate } from '../utils/format'
 import { ipfsToHttp } from '../utils/ipfs'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Users, Target, Calendar } from 'lucide-react'
 
 interface CampaignCardProps {
@@ -20,13 +21,14 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         {/* Campaign Image */}
         <div className="relative h-48 mb-4 rounded-lg overflow-hidden bg-gray-100">
           {campaign.imageUri ? (
-            <img 
+            <Image 
               src={imageUrl}
               alt={campaign.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.src = `https://via.placeholder.com/400x200?text=${encodeURIComponent(campaign.title)}`
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={() => {
+                // Fallback handled by Next.js Image component
               }}
             />
           ) : (

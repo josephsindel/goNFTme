@@ -5,11 +5,12 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { CONTRACT_ADDRESSES, CAMPAIGN_FACTORY_ABI } from '../../lib/web3'
 import { base } from 'wagmi/chains'
 import { CreateCampaignForm } from '../../types'
-import { parseEthAmount, isValidAddress } from '../../utils/format'
-import { uploadImageToIPFS, validateImageFile } from '../../utils/ipfs'
-import { campaignSchema, sanitizeString, sanitizeUrl, validateFileUpload } from '../../utils/validation'
+import { parseEthAmount } from '../../utils/format'
+import { uploadImageToIPFS } from '../../utils/ipfs'
+import { campaignSchema, sanitizeString, validateFileUpload } from '../../utils/validation'
 import { ConnectWallet } from '../../components/ConnectWallet'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Upload, Wallet, Target, FileText } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -121,9 +122,14 @@ export default function CreateCampaignPage() {
         return
       }
       
-    } catch (error: any) {
-      if (error.errors && error.errors.length > 0) {
-        toast.error(error.errors[0].message)
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'errors' in error) {
+        const zodError = error as { errors: Array<{ message: string }> }
+        if (zodError.errors && zodError.errors.length > 0) {
+          toast.error(zodError.errors[0].message)
+        } else {
+          toast.error('Please check your input and try again')
+        }
       } else {
         toast.error('Please check your input and try again')
       }
@@ -285,11 +291,15 @@ export default function CreateCampaignPage() {
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-400 transition-colors">
                 {imagePreview ? (
                   <div className="space-y-4">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
-                      className="max-h-48 mx-auto rounded-lg"
-                    />
+                    <div className="relative max-h-48 mx-auto">
+                      <Image 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        width={400}
+                        height={200}
+                        className="max-h-48 mx-auto rounded-lg object-cover"
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
