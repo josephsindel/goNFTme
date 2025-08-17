@@ -4,14 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
-    using Counters for Counters.Counter;
-    
-    Counters.Counter private _tokenIdCounter;
-    Counters.Counter private _campaignIdCounter;
+    uint256 private _tokenIdCounter;
+    uint256 private _campaignIdCounter;
     
     struct Campaign {
         uint256 id;
@@ -63,7 +60,7 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
     
     event CampaignCompleted(uint256 indexed campaignId, uint256 totalRaised);
     
-    constructor() ERC721("GoNFTme Donation", "GNFT") {}
+    constructor() ERC721("GoNFTme Donation", "GNFT") Ownable(msg.sender) {}
     
     /**
      * Create a new crowdfunding campaign
@@ -79,8 +76,8 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
         require(bytes(_title).length > 0, "Title cannot be empty");
         require(_recipient != address(0), "Recipient cannot be zero address");
         
-        uint256 campaignId = _campaignIdCounter.current();
-        _campaignIdCounter.increment();
+        uint256 campaignId = _campaignIdCounter;
+        _campaignIdCounter++;
         
         campaigns[campaignId] = Campaign({
             id: campaignId,
@@ -108,7 +105,7 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      */
     function donate(uint256 _campaignId, string memory _tokenUri) external payable nonReentrant {
         require(msg.value > 0, "Donation amount must be greater than 0");
-        require(_campaignId < _campaignIdCounter.current(), "Campaign does not exist");
+        require(_campaignId < _campaignIdCounter, "Campaign does not exist");
         
         Campaign storage campaign = campaigns[_campaignId];
         require(campaign.isActive, "Campaign is not active");
@@ -132,8 +129,8 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
         campaign.recipient.transfer(donationAmount);
         
         // Mint NFT
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
         
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, _tokenUri);
@@ -164,7 +161,7 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      * Get campaign details
      */
     function getCampaign(uint256 _campaignId) external view returns (Campaign memory) {
-        require(_campaignId < _campaignIdCounter.current(), "Campaign does not exist");
+        require(_campaignId < _campaignIdCounter, "Campaign does not exist");
         return campaigns[_campaignId];
     }
     
@@ -172,7 +169,7 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      * Get all active campaigns
      */
     function getActiveCampaigns() external view returns (Campaign[] memory) {
-        uint256 totalCampaigns = _campaignIdCounter.current();
+        uint256 totalCampaigns = _campaignIdCounter;
         uint256 activeCount = 0;
         
         // Count active campaigns
@@ -221,7 +218,7 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      * Get donation details by token ID
      */
     function getDonation(uint256 _tokenId) external view returns (Donation memory) {
-        require(_exists(_tokenId), "Token does not exist");
+        require(_ownerOf(_tokenId) != address(0), "Token does not exist");
         return donations[_tokenId];
     }
     
@@ -229,21 +226,21 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
      * Get total number of campaigns
      */
     function getTotalCampaigns() external view returns (uint256) {
-        return _campaignIdCounter.current();
+        return _campaignIdCounter;
     }
     
     /**
      * Get total number of NFTs minted
      */
     function getTotalNFTs() external view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _tokenIdCounter;
     }
     
     /**
      * Emergency pause function (only owner)
      */
     function pauseCampaign(uint256 _campaignId) external onlyOwner {
-        require(_campaignId < _campaignIdCounter.current(), "Campaign does not exist");
+        require(_campaignId < _campaignIdCounter, "Campaign does not exist");
         campaigns[_campaignId].isActive = false;
     }
     
