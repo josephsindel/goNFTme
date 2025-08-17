@@ -34,7 +34,7 @@ describe('ConnectWallet', () => {
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 
-  it('shows connect buttons when not connected', async () => {
+  it('shows connect wallet dropdown when not connected', async () => {
     mockUseAccount.mockReturnValue({
       address: undefined,
       isConnected: false,
@@ -44,7 +44,7 @@ describe('ConnectWallet', () => {
       connect: jest.fn(),
       connectors: [
         { uid: '1', name: 'Coinbase Wallet' },
-        { uid: '2', name: 'MetaMask' },
+        { uid: '2', name: 'Injected' },
       ],
       isPending: false,
     } as any)
@@ -56,8 +56,7 @@ describe('ConnectWallet', () => {
     render(<ConnectWallet />)
     
     await waitFor(() => {
-      expect(screen.getByText('Connect Coinbase Wallet')).toBeInTheDocument()
-      expect(screen.getByText('Connect MetaMask')).toBeInTheDocument()
+      expect(screen.getByText('Connect Wallet')).toBeInTheDocument()
     })
   })
 

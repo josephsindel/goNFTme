@@ -56,7 +56,35 @@ type-check: ## Run TypeScript type checking
 
 validate: lint type-check test-all ## Run all validation checks
 
+security: ## Run comprehensive security checks
+	npm run security:audit
+	npm run security:deps
+	npm run security:lint
+
+security-audit: ## Run security audit on dependencies
+	npm run security:audit
+
+security-lint: ## Run security-focused linting
+	npm run security:lint
+
+sonar-scan: ## Run SonarQube analysis (requires SonarQube server)
+	@echo "🔍 Running SonarQube security and quality analysis..."
+	npm run sonar:scan
+
+sonar-local: ## Run SonarQube with local scanner
+	@echo "🔍 Running local SonarQube analysis..."
+	@if command -v sonar-scanner >/dev/null 2>&1; then \
+		sonar-scanner; \
+	else \
+		echo "❌ SonarQube scanner not found. Install with:"; \
+		echo "   brew install sonar-scanner  # macOS"; \
+		echo "   Or download from: https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/"; \
+	fi
+
+security-full: security test-coverage sonar-local ## Complete security analysis with coverage
+
 setup: install compile ## Full project setup
 	@echo "✅ Project setup complete!"
 	@echo "Run 'make dev' to start development server"
-	@echo "Run 'make test' to run tests" 
+	@echo "Run 'make test' to run tests"
+	@echo "Run 'make security' for security analysis" 
