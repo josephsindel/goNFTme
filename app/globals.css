@@ -57,6 +57,14 @@
   
   /* Stylized GoNFTme logo effects */
   .logo-text {
+    /* Fallback color for browsers that don't support background-clip */
+    color: #667eea;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    position: relative;
+    display: inline-block;
+    
+    /* Gradient text effect for modern browsers */
     background: linear-gradient(
       135deg,
       #667eea 0%,
@@ -67,12 +75,18 @@
     );
     background-size: 400% 400%;
     -webkit-background-clip: text;
-    background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     animation: gradient-shift 4s ease-in-out infinite;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    position: relative;
+  }
+  
+  /* Fallback for browsers that don't support background-clip: text */
+  @supports not (-webkit-background-clip: text) {
+    .logo-text {
+      color: #667eea;
+      background: none;
+      animation: color-shift 4s ease-in-out infinite;
+    }
   }
   
   .logo-text::before {
@@ -109,6 +123,21 @@
     }
     50% {
       background-position: 100% 50%;
+    }
+  }
+  
+  @keyframes color-shift {
+    0%, 100% {
+      color: #667eea;
+    }
+    25% {
+      color: #764ba2;
+    }
+    50% {
+      color: #f093fb;
+    }
+    75% {
+      color: #f5576c;
     }
   }
   

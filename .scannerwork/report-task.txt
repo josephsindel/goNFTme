@@ -3,5 +3,5 @@ projectKey=gonftme
 serverUrl=https://sonarcloud.io
 serverVersion=8.0.0.66242
 dashboardUrl=https://sonarcloud.io/dashboard?id=gonftme
-ceTaskId=AZi5jcsFuknpjNvq4GZo
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZi5jcsFuknpjNvq4GZo
+ceTaskId=AZi5t4FP_EbA9o95vlss
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZi5t4FP_EbA9o95vlss
