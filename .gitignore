@@ -29,6 +29,13 @@ yarn-error.log*
 .env*.local
 .env
 
+# Deployment secrets (NEVER COMMIT)
+secrets.local.md
+SECRETS.md
+deployment-secrets.md
+.secrets/
+secrets/
+
 # vercel
 .vercel
 

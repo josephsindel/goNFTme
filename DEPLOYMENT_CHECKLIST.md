@@ -21,9 +21,9 @@
 ### 3. GitHub Secrets (Repository → Settings → Secrets and variables → Actions)
 ```
 # Vercel Integration
-VERCEL_TOKEN=[get-from-vercel-settings]
-VERCEL_ORG_ID=[get-from-vercel-settings]
-VERCEL_PROJECT_ID=[get-from-vercel-settings]
+VERCEL_TOKEN=[create-new-token-in-vercel-account-settings]
+VERCEL_ORG_ID=team_7Bo0zXnvyT86MNU7i7ZcRqw5
+VERCEL_PROJECT_ID=prj_RoMqXwDicdh7NPY1vDYclwMXtD43
 
 # Smart Contract
 STAGING_CONTRACT_ADDRESS=0x39C705725b91F24A372Eb4e43F97AAD07aEfDd62
@@ -48,7 +48,7 @@ SONAR_HOST_URL=https://sonarcloud.io
 ```
 NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS=0x39C705725b91F24A372Eb4e43F97AAD07aEfDd62
 NEXTAUTH_URL=https://staging.gonftme.com
-NEXTAUTH_SECRET=77c88404c300025ec6ee7fc6fba5b0d69594e03813290a42bce2597660b52a70
+NEXTAUTH_SECRET=[use-generated-staging-secret]
 GOOGLE_CLIENT_ID=[your-google-client-id]
 GOOGLE_CLIENT_SECRET=[your-google-client-secret]
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=[your-project-id]
@@ -59,7 +59,7 @@ NEXT_PUBLIC_ENVIRONMENT=staging
 ```
 NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS=[production-contract-address]
 NEXTAUTH_URL=https://gonftme.com
-NEXTAUTH_SECRET=82ed7d2a441f7327ec92234983865fbc6b6376dce658f768e672a0ee7f468451
+NEXTAUTH_SECRET=[use-generated-production-secret]
 GOOGLE_CLIENT_ID=[your-google-client-id]
 GOOGLE_CLIENT_SECRET=[your-google-client-secret]
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=[your-project-id]
