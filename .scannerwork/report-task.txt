@@ -1,7 +1,0 @@
-organization=josephsindel
-projectKey=gonftme
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.66242
-dashboardUrl=https://sonarcloud.io/dashboard?id=gonftme
-ceTaskId=AZi63pnY_EbA9o95vnmc
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZi63pnY_EbA9o95vnmc

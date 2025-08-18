@@ -103,9 +103,8 @@ npm run deploy:mainnet
 
 ## 📖 Documentation
 
-- **[Complete Learning Guide](docs/COMPLETE_LEARNING_GUIDE.md)** - Comprehensive technical documentation
-- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
-- **[Security Assessment](docs/OWASP_TOP_10_ASSESSMENT.md)** - Security analysis and compliance
+- **[Technical Architecture](docs/ARCHITECTURE.md)** - Comprehensive technical documentation
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
 
 ## 🧪 Testing
 
@@ -188,7 +187,7 @@ GoNFTme is free and open-source. If you find it valuable:
 ## 🔗 Links
 
 - **Live Demo**: [gonftme.com](https://go-nft-me-git-main-joesindels-projects.vercel.app/)
-- **Documentation**: [Complete Learning Guide](docs/COMPLETE_LEARNING_GUIDE.md)
+- **Documentation**: [Technical Architecture](docs/ARCHITECTURE.md)
 - **Smart Contract**: [BaseScan](https://sepolia.basescan.org/address/0x38d0c38EBED03B12f01D94a5117e039129fC2076)
 - **Base Network**: [base.org](https://base.org)
 

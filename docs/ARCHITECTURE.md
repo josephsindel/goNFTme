@@ -1,5 +1,5 @@
-# GoNFTme - Complete Learning Guide
-*A Comprehensive Deep Dive into Web3 Crowdfunding with NFT Rewards*
+# Technical Architecture Guide
+*Deep Dive into GoNFTme's Web3 Crowdfunding Implementation*
 
 ---
 

@@ -35,6 +35,52 @@ SECRETS.md
 deployment-secrets.md
 .secrets/
 secrets/
+DEPLOYMENT_CHECKLIST.md
+
+# Documentation artifacts (keep source, ignore generated)
+*.pdf
+*.html
+docs/*.pdf
+docs/*.html
+
+# Test artifacts and reports
+test-results/
+playwright-report/
+coverage/
+.nyc_output/
+reports/
+
+# Build artifacts
+.scannerwork/
+build/
+dist/
+
+# Documentation artifacts (generated files)
+*.pdf
+*.html
+docs/*.pdf
+docs/*.html
+
+# Development artifacts
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Deployment and setup artifacts
+DEPLOYMENT_CHECKLIST.md
+setup-deployment.js
+check-env.js
+fix-env.js
+generate-wallet.js
 
 # vercel
 .vercel
