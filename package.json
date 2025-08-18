@@ -35,7 +35,7 @@
     "prepare:production": "npm run prepare:staging && npm run security:audit",
     "setup:deployment": "node scripts/setup-deployment.js",
     "update:vercel": "node scripts/update-vercel-api.js",
-    "deploy:auto": "VERCEL_TOKEN=[REDACTED-TOKEN] npm run deploy:base-sepolia"
+    "deploy:auto": "echo 'Set VERCEL_TOKEN environment variable first' && VERCEL_TOKEN=$VERCEL_TOKEN npm run deploy:base-sepolia"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.34.0",

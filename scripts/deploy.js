@@ -113,7 +113,7 @@ async function main() {
       }
     } else {
       console.log('\n💡 To enable auto-update of Vercel:')
-      console.log('   export VERCEL_TOKEN=[REDACTED-TOKEN]')
+      console.log('   export VERCEL_TOKEN=your_vercel_token_here')
       console.log('   Then run deployment again')
     }
     

@@ -4,7 +4,7 @@ const https = require('https');
 const fs = require('fs');
 
 // Vercel project configuration
-const VERCEL_TOKEN = process.env.VERCEL_TOKEN || '[REDACTED-TOKEN]';
+const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 const VERCEL_PROJECT_ID = 'prj_RoMqXwDicdh7NPY1vDYclwMXtD43';
 const VERCEL_TEAM_ID = 'team_7Bo0zXnvyT86MNU7i7ZcRqw5';
 
