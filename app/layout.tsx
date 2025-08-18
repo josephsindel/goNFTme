@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google'
 import { Providers } from './providers'
 import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from '../components/ErrorBoundary'
+import AuthProvider from '../components/AuthProvider'
+import PiButton from '../components/PiButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,19 +23,22 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ErrorBoundary>
-          <Providers>
-            {children}
-            <Toaster 
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: '#363636',
-                  color: '#fff',
-                },
-              }}
-            />
-          </Providers>
+          <AuthProvider>
+            <Providers>
+              {children}
+              <PiButton />
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#363636',
+                    color: '#fff',
+                  },
+                }}
+              />
+            </Providers>
+          </AuthProvider>
         </ErrorBoundary>
       </body>
     </html>

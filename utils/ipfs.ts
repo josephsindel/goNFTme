@@ -1,15 +1,62 @@
 /**
- * Upload image to IPFS (simplified version - in production use Pinata or similar)
- * For now, we'll create a placeholder that returns a data URL
+ * Upload image to IPFS (simplified version for testing)
+ * Returns the actual uploaded image as a data URL for testing
  */
 export async function uploadImageToIPFS(file: File): Promise<string> {
-  return new Promise((resolve) => {
+  // For testing, convert the actual uploaded file to a data URL
+  // In production, this would upload to IPFS and return the hash
+  
+  return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onloadend = () => {
-      resolve(reader.result as string)
+    
+    reader.onload = () => {
+      try {
+        const dataUrl = reader.result as string
+        // For blockchain storage, we'll use a shorter identifier
+        // but the actual image will be stored in the frontend
+        const timestamp = Date.now()
+        const fileId = `user-upload-${timestamp}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`
+        
+        // Clear old images to prevent quota issues
+        const keys = Object.keys(localStorage)
+        const imageKeys = keys.filter(key => key.startsWith('image-user-upload-'))
+        
+        // Keep only the 3 most recent images
+        if (imageKeys.length >= 3) {
+          const sortedKeys = imageKeys.toSorted((a, b) => a.localeCompare(b))
+          sortedKeys.slice(0, sortedKeys.length - 2).forEach(key => {
+            localStorage.removeItem(key)
+          })
+        }
+        
+        // Store the actual image data in localStorage for demo purposes
+        localStorage.setItem(`image-${fileId}`, dataUrl)
+        
+        // Return the identifier that can be stored on blockchain
+        resolve(fileId)
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+          reject(new Error('Image too large for browser storage. Please try a smaller image (under 1MB recommended).'))
+        } else {
+          reject(new Error('Failed to store image: ' + (error instanceof Error ? error.message : 'Unknown error')))
+        }
+      }
     }
+    
+    reader.onerror = () => {
+      reject(new Error('Failed to read file'))
+    }
+    
     reader.readAsDataURL(file)
   })
+}
+
+/**
+ * Get stored image from localStorage (for demo purposes)
+ */
+export function getStoredImage(imageId: string): string | null {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem(`image-${imageId}`)
 }
 
 /**
@@ -75,20 +122,34 @@ export async function uploadMetadataToIPFS(metadata: any): Promise<string> {
 /**
  * Convert IPFS hash to HTTP URL
  */
-export function ipfsToHttp(ipfsHash: string): string {
-  if (ipfsHash.startsWith('data:')) {
-    return ipfsHash // Already a data URL
+export function ipfsToHttp(imageId: string): string {
+  if (!imageId) return '/placeholder-campaign.svg'
+  
+  // Check if this is a stored image ID (from our upload system)
+  if (imageId.startsWith('user-upload-')) {
+    const storedImage = getStoredImage(imageId)
+    if (storedImage) {
+      return storedImage
+    }
+    // If not found locally (e.g., accessing from different device), 
+    // fall back to a deterministic placeholder based on the image ID
+    const seed = imageId.slice(-8) // Use last 8 chars as seed
+    return `https://picsum.photos/400/300?random=${seed}`
   }
   
-  if (ipfsHash.startsWith('ipfs://')) {
-    return ipfsHash.replace('ipfs://', 'https://ipfs.io/ipfs/')
+  if (imageId.startsWith('data:')) {
+    return imageId // Already a data URL
   }
   
-  if (ipfsHash.startsWith('Qm') || ipfsHash.startsWith('baf')) {
-    return `https://ipfs.io/ipfs/${ipfsHash}`
+  if (imageId.startsWith('ipfs://')) {
+    return imageId.replace('ipfs://', 'https://ipfs.io/ipfs/')
   }
   
-  return ipfsHash
+  if (imageId.startsWith('Qm') || imageId.startsWith('baf')) {
+    return `https://ipfs.io/ipfs/${imageId}`
+  }
+  
+  return imageId
 }
 
 /**

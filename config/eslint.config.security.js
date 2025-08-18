@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import tseslint from '@typescript-eslint/eslint-plugin'
+import tsparser from '@typescript-eslint/parser'
 import sonarjs from 'eslint-plugin-sonarjs'
 import security from 'eslint-plugin-security'
 
@@ -7,6 +8,45 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'build/**',
+      'reports/**',
+      '**/*.d.ts',
+      '**/webpack.*.js',
+      '**/*.hot-update.js',
+      '**/main-app.js',
+      '**/_buildManifest.js',
+      '**/_ssgManifest.js'
+    ],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        global: 'readonly',
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly'
+      }
+    },
     plugins: {
       '@typescript-eslint': tseslint,
       'sonarjs': sonarjs,
@@ -26,7 +66,7 @@ export default [
       
       // SonarJS code quality rules
       'sonarjs/cognitive-complexity': ['error', 15],
-      'sonarjs/no-duplicate-string': ['error', 3],
+      'sonarjs/no-duplicate-string': ['error', { threshold: 3 }],
       'sonarjs/no-identical-functions': 'error',
       'sonarjs/no-redundant-jump': 'error',
       'sonarjs/no-unused-collection': 'error',

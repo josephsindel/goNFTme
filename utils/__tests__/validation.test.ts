@@ -1,7 +1,6 @@
 import {
   campaignSchema,
   donationSchema,
-  addressSchema,
   sanitizeString,
   sanitizeUrl,
   validateFileUpload,
@@ -61,10 +60,30 @@ describe('Validation Utilities', () => {
     it('should validate correct donation data', () => {
       const validDonation = {
         amount: '0.5',
+        campaignId: 1,
+        message: 'Great campaign!'
+      }
+      
+      expect(() => donationSchema.parse(validDonation)).not.toThrow()
+    })
+
+    it('should validate donation without message', () => {
+      const validDonation = {
+        amount: '0.5',
         campaignId: 1
       }
       
       expect(() => donationSchema.parse(validDonation)).not.toThrow()
+    })
+
+    it('should reject message that is too long', () => {
+      const invalidDonation = {
+        amount: '0.5',
+        campaignId: 1,
+        message: 'x'.repeat(201) // Over 200 characters
+      }
+      
+      expect(() => donationSchema.parse(invalidDonation)).toThrow('Message must be less than 200 characters')
     })
 
     it('should reject donation amount too large', () => {

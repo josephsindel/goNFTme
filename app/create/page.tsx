@@ -1,34 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { CONTRACT_ADDRESSES, CAMPAIGN_FACTORY_ABI } from '../../lib/web3'
-import { base } from 'wagmi/chains'
+import { baseSepolia } from 'wagmi/chains'
 import { CreateCampaignForm } from '../../types'
 import { parseEthAmount } from '../../utils/format'
 import { uploadImageToIPFS } from '../../utils/ipfs'
 import { campaignSchema, sanitizeString, validateFileUpload } from '../../utils/validation'
+import { useEthToUsd, formatUsd } from '../../utils/currency'
+// NFT image generation import removed - using simplified approach
 import { ConnectWallet } from '../../components/ConnectWallet'
+// import { NetworkSwitcher } from '../../components/NetworkSwitcher'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Upload, Wallet, Target, FileText } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { validateWalletConnection } from '../../utils/wallet'
 
 export default function CreateCampaignPage() {
   const router = useRouter()
   const { address, isConnected } = useAccount()
   const [isUploading, setIsUploading] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
   
   const [formData, setFormData] = useState<CreateCampaignForm>({
     title: '',
     description: '',
-    goalAmount: '',
+    goalAmount: '0.00001', // Default to minimum required amount
     creatorWallet: address || '',
     recipientWallet: address || '',
     image: null,
   })
+  
+  // USD conversion hooks
+  const { usdAmount: goalUsdAmount, loading: goalUsdLoading } = useEthToUsd(formData.goalAmount)
 
   const { 
     writeContract, 
@@ -44,8 +52,13 @@ export default function CreateCampaignPage() {
     hash,
   })
 
+  // Handle hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   // Update wallet addresses when account changes
-  useState(() => {
+  useEffect(() => {
     if (address) {
       setFormData(prev => ({
         ...prev,
@@ -88,14 +101,11 @@ export default function CreateCampaignPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!isConnected || !address) {
-      toast.error('Please connect your wallet first')
-      return
-    }
+    if (!validateWalletConnection(isConnected, address)) return
 
-    // Sanitize data before validation
-    const sanitizedTitle = sanitizeString(formData.title)
-    const sanitizedDescription = sanitizeString(formData.description)
+    // Sanitize data before validation (with security logging)
+    const sanitizedTitle = sanitizeString(formData.title, 'campaign_creation')
+    const sanitizedDescription = sanitizeString(formData.description, 'campaign_creation')
     
     // Comprehensive validation using Zod schema
     try {
@@ -148,8 +158,13 @@ export default function CreateCampaignPage() {
       
       const goalInWei = parseEthAmount(formData.goalAmount)
 
+      // Initial donation feature temporarily disabled
+      // if (initialDonation && parseFloat(initialDonation) > 0) {
+      //   setNeedsInitialDonation(true)
+      // }
+
       writeContract({
-        address: CONTRACT_ADDRESSES[base.id] as `0x${string}`,
+        address: CONTRACT_ADDRESSES[baseSepolia.id] as `0x${string}`,
         abi: CAMPAIGN_FACTORY_ABI,
         functionName: 'createCampaign',
         args: [
@@ -169,31 +184,89 @@ export default function CreateCampaignPage() {
   }
 
   // Handle transaction confirmation
-  useState(() => {
-    if (isConfirmed) {
-      toast.success('Campaign created successfully!', { id: 'create' })
+  useEffect(() => {
+    if (isConfirmed && hash) {
+      // Campaign creation completed
+      toast.success('🎉 Campaign created successfully!', { id: 'create', duration: 6000 })
       setIsUploading(false)
-      router.push('/')
+      
+      // Show additional success feedback
+      setTimeout(() => {
+        toast.success('✅ Your campaign is now live and accepting donations!', { duration: 8000 })
+      }, 1000)
+      
+      setTimeout(() => {
+        toast.success('🎖️ You received a Creator NFT for starting this campaign!', { duration: 8000 })
+      }, 2000)
+      
+      // Redirect after showing success messages
+      setTimeout(() => {
+        router.push('/')
+      }, 4000)
     }
-  }, [isConfirmed, router])
+  }, [isConfirmed, hash, router])
 
   // Handle transaction errors
-  useState(() => {
+  useEffect(() => {
     if (createError) {
-      toast.error('Failed to create campaign')
+      toast.error('❌ Failed to create campaign: ' + (createError.message || 'Unknown error'))
       setIsUploading(false)
     }
   }, [createError])
 
   const isProcessing = isCreating || isConfirming || isUploading
 
+  // Show loading state during hydration
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center h-16">
+              <Link 
+                href="/"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Home</span>
+              </Link>
+            </div>
+          </div>
+        </header>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Connect Your Wallet</h1>
-          <p className="text-gray-600 mb-8">You need to connect your wallet to create a campaign</p>
-          <ConnectWallet />
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center h-16">
+              <Link 
+                href="/"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Home</span>
+              </Link>
+            </div>
+          </div>
+        </header>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Connect Your Wallet</h1>
+            <p className="text-gray-600 mb-8">You need to connect your wallet to create a campaign</p>
+            <ConnectWallet />
+          </div>
         </div>
       </div>
     )
@@ -248,10 +321,11 @@ export default function CreateCampaignPage() {
 
             {/* Campaign Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="campaign-description" className="block text-sm font-medium text-gray-700 mb-2">
                 Description *
               </label>
               <textarea
+                id="campaign-description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
@@ -266,20 +340,36 @@ export default function CreateCampaignPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Target className="w-4 h-4 inline mr-2" />
-                Goal Amount (ETH) *
+                Fundraising Goal (ETH) *
               </label>
-              <input
-                type="number"
-                name="goalAmount"
-                value={formData.goalAmount}
-                onChange={handleInputChange}
-                placeholder="1.0"
-                step="0.01"
-                min="0"
-                className="input-field"
-                required
-              />
+              <div className="space-y-2">
+                <input
+                  type="number"
+                  name="goalAmount"
+                  value={formData.goalAmount}
+                  onChange={handleInputChange}
+                  placeholder="0.00001"
+                  step="0.000000000000000001"
+                  min="0.000000000000000001"
+                  className="input-field"
+                  required
+                />
+                {goalUsdAmount && !goalUsdLoading && (
+                  <p className="text-sm text-gray-500">
+                    ≈ {formatUsd(goalUsdAmount)} USD
+                  </p>
+                )}
+                {goalUsdLoading && (
+                  <p className="text-sm text-gray-400">Converting to USD...</p>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                This is your fundraising target. You can set it to the minimum (0.00001 ETH) and let donations accumulate naturally.
+              </p>
             </div>
+
+            {/* Optional Initial Donation - Temporarily disabled */}
+
 
             {/* Image Upload */}
             <div>
@@ -371,18 +461,18 @@ export default function CreateCampaignPage() {
                 disabled={isProcessing}
                 className="w-full btn-primary py-3 text-lg disabled:opacity-50"
               >
-                {isProcessing ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>
-                      {isUploading ? 'Uploading...' : 
-                       isCreating ? 'Creating Campaign...' : 
-                       isConfirming ? 'Confirming...' : 'Processing...'}
-                    </span>
-                  </div>
-                ) : (
-                  'Create Campaign'
-                )}
+                                            {isProcessing ? (
+                              <div className="flex items-center justify-center space-x-2">
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                <span>
+                                  {isUploading ? '📤 Uploading image to IPFS...' : 
+                                   isCreating ? '⛓️ Creating campaign on blockchain...' : 
+                                   isConfirming ? '⏳ Waiting for blockchain confirmation...' : '🔄 Processing...'}
+                                </span>
+                              </div>
+                            ) : (
+                              'Create Campaign'
+                            )}
               </button>
             </div>
           </form>

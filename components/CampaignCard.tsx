@@ -2,9 +2,9 @@
 
 import { Campaign } from '../types'
 import { formatEthAmount, formatProgress, formatAddress, formatDate } from '../utils/format'
-import { ipfsToHttp } from '../utils/ipfs'
+import { useEthToUsd, formatUsd } from '../utils/currency'
 import Link from 'next/link'
-import Image from 'next/image'
+import { SafeImage } from './SafeImage'
 import { Users, Target, Calendar } from 'lucide-react'
 
 interface CampaignCardProps {
@@ -13,29 +13,26 @@ interface CampaignCardProps {
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
   const progress = formatProgress(campaign.raisedAmount, campaign.goalAmount)
-  const imageUrl = ipfsToHttp(campaign.imageUri)
+  
+  // USD conversions
+  const raisedEth = formatEthAmount(campaign.raisedAmount)
+  const goalEth = formatEthAmount(campaign.goalAmount)
+  const { usdAmount: raisedUsd } = useEthToUsd(raisedEth)
+  const { usdAmount: goalUsd } = useEthToUsd(goalEth)
 
   return (
     <Link href={`/campaign/${campaign.id}`}>
       <div className="card hover:shadow-glow transition-all duration-300 cursor-pointer h-full">
         {/* Campaign Image */}
         <div className="relative h-48 mb-4 rounded-lg overflow-hidden bg-gray-100">
-          {campaign.imageUri ? (
-            <Image 
-              src={imageUrl}
-              alt={campaign.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              onError={() => {
-                // Fallback handled by Next.js Image component
-              }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <Target className="w-12 h-12" />
-            </div>
-          )}
+          <SafeImage 
+            src={campaign.imageUri}
+            alt={campaign.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            fallbackIcon={<Target className="w-12 h-12" />}
+          />
           
           {/* Progress Badge */}
           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium">
@@ -63,12 +60,26 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="font-medium text-gray-900">
-                {formatEthAmount(campaign.raisedAmount)} ETH
-              </span>
-              <span className="text-gray-600">
-                of {formatEthAmount(campaign.goalAmount)} ETH
-              </span>
+              <div className="flex flex-col">
+                <span className="font-medium text-gray-900">
+                  {raisedEth} ETH
+                </span>
+                {raisedUsd && (
+                  <span className="text-xs text-gray-500">
+                    {formatUsd(raisedUsd)}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col text-right">
+                <span className="text-gray-600">
+                  of {goalEth} ETH
+                </span>
+                {goalUsd && (
+                  <span className="text-xs text-gray-500">
+                    {formatUsd(goalUsd)}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 

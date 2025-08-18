@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ConnectWallet } from '../ConnectWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
@@ -26,7 +27,7 @@ describe('ConnectWallet Security Tests', () => {
     mockUseAccount.mockReturnValue({
       address: maliciousAddress as `0x${string}`,
       isConnected: true,
-    } as any)
+    } as ReturnType<typeof useAccount>)
     
     mockUseConnect.mockReturnValue({
       connect: jest.fn(),

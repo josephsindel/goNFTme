@@ -15,7 +15,8 @@ const customJestConfig = {
     '<rootDir>/e2e/',
     '<rootDir>/test/',
     '<rootDir>/build/',
-    '<rootDir>/reports/'
+    '<rootDir>/reports/',
+    '<rootDir>/config/reports/'
   ],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',

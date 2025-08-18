@@ -5,6 +5,7 @@ import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 // Get project ID for WalletConnect
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || ''
 
+// Create config only once to prevent multiple WalletConnect initializations
 export const config = createConfig({
   chains: [base, baseSepolia],
   connectors: [
@@ -15,7 +16,16 @@ export const config = createConfig({
     injected(),
     // Only include WalletConnect if we have a valid project ID
     ...(projectId && projectId !== 'your_walletconnect_project_id_here' && projectId.length > 10 
-      ? [walletConnect({ projectId })] 
+      ? [walletConnect({ 
+          projectId,
+          metadata: {
+            name: 'GoNFTme',
+            description: 'Web3 Crowdfunding with NFT Rewards',
+            url: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
+            icons: ['https://goNFTme.com/logo.png']
+          },
+          showQrModal: false, // Reduce initialization overhead
+        })] 
       : []
     ),
   ],
@@ -23,12 +33,13 @@ export const config = createConfig({
     [base.id]: http(),
     [baseSepolia.id]: http(),
   },
+  ssr: true, // Enable SSR support
 })
 
 export const CONTRACT_ADDRESSES = {
-  [base.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '',
-  [baseSepolia.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '',
-} as const
+  [base.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0x021CF966eC6De52bB2048e9C8a71C7ACD79B41BA',
+  [baseSepolia.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0x021CF966eC6De52bB2048e9C8a71C7ACD79B41BA',
+} as const as const
 
 export const SUPPORTED_CHAINS = [base, baseSepolia]
 
@@ -384,6 +395,86 @@ export const CAMPAIGN_FACTORY_ABI = [
         "name": "timestamps",
         "type": "uint256[]"
       }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "pauseCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "deleteCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "_user", "type": "address"}],
+    "name": "getUserNFTs",
+    "outputs": [{"internalType": "uint256[]", "name": "", "type": "uint256[]"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "name": "tokenURI",
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "_campaignId", "type": "uint256"}],
+    "name": "getCampaignDonations",
+    "outputs": [{"internalType": "uint256[]", "name": "", "type": "uint256[]"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "_tokenId", "type": "uint256"}],
+    "name": "getDonation",
+    "outputs": [{
+      "components": [
+        {"internalType": "uint256", "name": "campaignId", "type": "uint256"},
+        {"internalType": "address", "name": "donor", "type": "address"},
+        {"internalType": "uint256", "name": "amount", "type": "uint256"},
+        {"internalType": "uint256", "name": "timestamp", "type": "uint256"},
+        {"internalType": "uint256", "name": "tokenId", "type": "uint256"},
+        {"internalType": "uint256", "name": "donorNumber", "type": "uint256"}
+      ],
+      "internalType": "struct CampaignFactory.Donation",
+      "name": "",
+      "type": "tuple"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "uint256", "name": "_campaignId", "type": "uint256"},
+      {"internalType": "uint256", "name": "_limit", "type": "uint256"}
+    ],
+    "name": "getCampaignLeaderboard",
+    "outputs": [
+      {"internalType": "address[]", "name": "donors", "type": "address[]"},
+      {"internalType": "uint256[]", "name": "amounts", "type": "uint256[]"},
+      {"internalType": "uint256[]", "name": "timestamps", "type": "uint256[]"}
     ],
     "stateMutability": "view",
     "type": "function"

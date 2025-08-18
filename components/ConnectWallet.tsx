@@ -62,7 +62,15 @@ export function ConnectWallet() {
             {/* Backdrop */}
             <div 
               className="fixed inset-0 z-10" 
+              role="button"
+              tabIndex={0}
               onClick={() => setShowDropdown(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                  setShowDropdown(false)
+                }
+              }}
+              aria-label="Close dropdown"
             />
             {/* Dropdown */}
             <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border z-20 py-2">
@@ -124,7 +132,15 @@ export function ConnectWallet() {
           {/* Backdrop */}
           <div 
             className="fixed inset-0 z-10" 
+            role="button"
+            tabIndex={0}
             onClick={() => setShowDropdown(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                setShowDropdown(false)
+              }
+            }}
+            aria-label="Close dropdown"
           />
           {/* Dropdown */}
           <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border z-20 py-2">

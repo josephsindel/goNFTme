@@ -109,4 +109,18 @@ setup: install compile ## Full project setup
 	@echo "✅ Project setup complete!"
 	@echo "Run 'make dev' to start development server"
 	@echo "Run 'make test' to run tests"
+
+setup-env: ## Interactive environment setup wizard
+	@echo "🚀 Starting environment setup wizard..."
+	node scripts/setup.js
+
+setup-quick: ## Quick setup with guided configuration
+	@echo "🔧 Quick setup guide:"
+	@echo ""
+	@echo "1. Get Alchemy API key: https://www.alchemy.com/"
+	@echo "2. Create Base Sepolia app and copy API key"
+	@echo "3. Run: make setup-env"
+	@echo "4. Deploy contract: make deploy-testnet"
+	@echo ""
+	@echo "Or run 'make setup-env' for interactive setup!"
 	@echo "Run 'make security' for security analysis" 

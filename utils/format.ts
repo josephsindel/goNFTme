@@ -42,8 +42,8 @@ export function formatDate(timestamp: bigint): string {
  * Format progress percentage
  */
 export function formatProgress(raised: bigint, goal: bigint): number {
-  if (goal === 0n) return 0
-  return Math.min(Number((raised * 100n) / goal), 100)
+  if (goal === BigInt(0)) return 0
+  return Math.min(Number((raised * BigInt(100)) / goal), 100)
 }
 
 /**

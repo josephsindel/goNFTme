@@ -10,20 +10,20 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>
 
-let env: Env
-
-try {
-  env = envSchema.parse(process.env)
-} catch (error) {
-  console.warn('⚠️  Environment validation failed:', error)
-  // Provide defaults for development
-  env = {
-    NEXT_PUBLIC_BASE_RPC_URL: 'https://mainnet.base.org',
-    NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: 'https://sepolia.base.org',
+function createEnv(): Env {
+  try {
+    return envSchema.parse(process.env)
+  } catch (error) {
+    console.warn('⚠️  Environment validation failed:', error)
+    // Provide defaults for development
+    return {
+      NEXT_PUBLIC_BASE_RPC_URL: 'https://mainnet.base.org',
+      NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: 'https://sepolia.base.org',
+    }
   }
 }
 
-export { env }
+export const env = createEnv()
 
 export function validateEnvironment(): { isValid: boolean; missingVars: string[] } {
   const requiredForProduction = [

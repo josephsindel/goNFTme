@@ -100,6 +100,19 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
         
         userCampaigns[msg.sender].push(campaignId);
         
+        // Mint creator NFT
+        uint256 creatorTokenId = _tokenIdCounter;
+        _tokenIdCounter++;
+        _mint(msg.sender, creatorTokenId);
+        
+        // Create creator NFT with minimal metadata - frontend will generate dynamic image
+        string memory creatorTokenUri = string(abi.encodePacked(
+            '{"name":"Creator-', Strings.toString(campaignId), 
+            '","image":"', _imageUri, 
+            '","role":"creator"}' 
+        ));
+        _setTokenURI(creatorTokenId, creatorTokenUri);
+        
         emit CampaignCreated(campaignId, msg.sender, _recipient, _title, _goalAmount);
         
         return campaignId;
@@ -218,6 +231,26 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
     }
     
     /**
+     * Get user's NFT token IDs
+     */
+    function getUserNFTs(address _user) external view returns (uint256[] memory) {
+        uint256 balance = balanceOf(_user);
+        uint256[] memory tokenIds = new uint256[](balance);
+        uint256 currentIndex = 0;
+        
+        // Iterate through all tokens to find ones owned by the user
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            if (_ownerOf(i) == _user) {
+                tokenIds[currentIndex] = i;
+                currentIndex++;
+                if (currentIndex >= balance) break;
+            }
+        }
+        
+        return tokenIds;
+    }
+    
+    /**
      * Get campaign donations (token IDs)
      */
     function getCampaignDonations(uint256 _campaignId) external view returns (uint256[] memory) {
@@ -252,6 +285,16 @@ contract CampaignFactory is ERC721URIStorage, Ownable, ReentrancyGuard {
     function pauseCampaign(uint256 _campaignId) external onlyOwner {
         require(_campaignId < _campaignIdCounter, "Campaign does not exist");
         campaigns[_campaignId].isActive = false;
+    }
+    
+    /**
+     * Delete campaign function (only owner) - marks as inactive permanently
+     */
+    function deleteCampaign(uint256 _campaignId) external onlyOwner {
+        require(_campaignId < _campaignIdCounter, "Campaign does not exist");
+        campaigns[_campaignId].isActive = false;
+        // Note: We don't actually delete the data for transparency and NFT integrity
+        // We just mark it as inactive so it won't appear in getActiveCampaigns
     }
     
     /**

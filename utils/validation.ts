@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { logValidationFailure, logSuspiciousActivity, logRateLimit } from './security-logger'
 
 // Campaign validation schema
 export const campaignSchema = z.object({
@@ -18,7 +19,7 @@ export const campaignSchema = z.object({
     .string()
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Goal amount must be a positive number')
     .refine((val) => Number(val) <= 1000, 'Goal amount cannot exceed 1000 ETH')
-    .refine((val) => Number(val) >= 0.001, 'Goal amount must be at least 0.001 ETH'),
+    .refine((val) => Number(val) >= 0.000000000000000001, 'Goal amount must be at least 1 wei (0.000000000000000001 ETH)'),
   
   recipientWallet: z
     .string()
@@ -37,12 +38,17 @@ export const donationSchema = z.object({
     .string()
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Donation amount must be positive')
     .refine((val) => Number(val) <= 100, 'Donation amount cannot exceed 100 ETH')
-    .refine((val) => Number(val) >= 0.0001, 'Donation amount must be at least 0.0001 ETH'),
+    .refine((val) => Number(val) >= 0.000000000000000001, 'Donation amount must be at least 1 wei (0.000000000000000001 ETH)'),
   
   campaignId: z
     .number()
     .int()
-    .min(0, 'Invalid campaign ID')
+    .min(0, 'Invalid campaign ID'),
+    
+  message: z
+    .string()
+    .max(200, 'Message must be less than 200 characters')
+    .optional()
 })
 
 // Address validation
@@ -50,17 +56,39 @@ export const addressSchema = z
   .string()
   .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid Ethereum address format')
 
-// Sanitization functions
-export function sanitizeString(input: string): string {
+// Sanitization functions with security logging
+export function sanitizeString(input: string, source = 'unknown'): string {
   if (!input) return ''
   
+  const original = input
+  
   // Remove potential XSS characters and patterns
-  return input
+  const sanitized = input
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
+    .replace(/<[^>]*>/g, '') // Remove all HTML tags
     .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .replace(/[<>]/g, '') // Remove remaining angle brackets
+    .replace(/vbscript:/gi, '') // Remove vbscript: protocol
+    .replace(/data:/gi, '') // Remove data: protocol (can be dangerous)
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replace(/expression\s*\(/gi, '') // Remove CSS expressions
+    .replace(/url\s*\(/gi, '') // Remove CSS url() calls
+    .replace(/[<>'"]/g, '') // Remove dangerous characters
+    .replace(/[^\x20-\x7E\n\r\t]/g, '') // Keep only printable ASCII + basic whitespace
     .trim()
+
+  // Log if sanitization removed potentially malicious content
+  if (original !== sanitized) {
+    const removedContent = original.replace(sanitized, '')
+    
+    // Check for likely attacks
+    if (/<script|javascript:|on\w+=|<\w+/i.test(original)) {
+      logValidationFailure('string_input', original, 'XSS_attempt_detected', source)
+    } else if (original.length > sanitized.length + 10) {
+      logValidationFailure('string_input', original, 'suspicious_content_removed', source)
+    }
+  }
+  
+  return sanitized
 }
 
 export function sanitizeUrl(url: string): string {
@@ -93,7 +121,7 @@ export class RateLimiter {
     private windowMs: number = 60000 // 1 minute
   ) {}
   
-  isRateLimited(identifier: string): boolean {
+  isRateLimited(identifier: string, source = 'unknown'): boolean {
     const now = Date.now()
     const attempts = this.attempts.get(identifier) || []
     
@@ -101,6 +129,8 @@ export class RateLimiter {
     const validAttempts = attempts.filter(time => now - time < this.windowMs)
     
     if (validAttempts.length >= this.maxAttempts) {
+      // Log rate limit violation
+      logRateLimit(identifier, this.maxAttempts, validAttempts.length, source)
       return true
     }
     
@@ -135,7 +165,7 @@ export function getCSPHeader(): string {
 
 // Validate file upload security
 export function validateFileUpload(file: File): { valid: boolean; error?: string } {
-  const maxSize = 5 * 1024 * 1024 // 5MB
+  const maxSize = 1 * 1024 * 1024 // 1MB - reduced to prevent blockchain transaction size issues
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
   const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
   

@@ -3,24 +3,27 @@
 import { useState, useEffect } from 'react'
 import { useReadContract } from 'wagmi'
 import { CONTRACT_ADDRESSES, CAMPAIGN_FACTORY_ABI } from '../lib/web3'
-import { base } from 'wagmi/chains'
+import { baseSepolia } from 'wagmi/chains'
 import { Campaign } from '../types'
 // Utility imports will be used when campaigns are loaded
 import Link from 'next/link'
-import { Plus, Target, Users, Calendar } from 'lucide-react'
+import { Plus, Target, Users, Calendar, Award } from 'lucide-react'
 import { ConnectWallet } from '../components/ConnectWallet'
 import { CampaignCard } from '../components/CampaignCard'
 
 export default function HomePage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
 
-  // Read active campaigns from contract
-  const { data: activeCampaigns, isError, isLoading } = useReadContract({
-    address: CONTRACT_ADDRESSES[base.id] as `0x${string}`,
+  // Read all campaigns from contract (active and completed)
+  const { data: activeCampaigns, isError, isLoading, error } = useReadContract({
+    address: CONTRACT_ADDRESSES[baseSepolia.id] as `0x${string}`,
     abi: CAMPAIGN_FACTORY_ABI,
     functionName: 'getActiveCampaigns',
-    chainId: base.id,
+    chainId: baseSepolia.id,
   })
+
+  // For now, we'll show all campaigns from getActiveCampaigns
+  // In the future, we could add a getAllCampaigns function to show completed ones too
 
   useEffect(() => {
     if (activeCampaigns) {
@@ -41,6 +44,13 @@ export default function HomePage() {
               <span className="ml-3 text-sm text-gray-500 hidden sm:inline">Web3 Crowdfunding</span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link 
+                href="/my-nfts"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm font-medium"
+              >
+                <Award className="w-4 h-4" />
+                <span className="hidden sm:inline">My NFTs</span>
+              </Link>
               <Link 
                 href="/create"
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl text-sm font-medium"
@@ -67,7 +77,7 @@ export default function HomePage() {
             Built on Base blockchain for fast, secure, and affordable transactions.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12">
+          <div className="flex justify-center items-center mb-12">
             <Link 
               href="/create"
               className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 sm:px-8 py-3 text-lg font-medium rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl"
@@ -75,18 +85,6 @@ export default function HomePage() {
               <Plus className="w-5 h-5" />
               <span>Start Your Campaign</span>
             </Link>
-            <button 
-              onClick={() => {
-                // Scroll to features section
-                const featuresSection = document.querySelector('.grid.sm\\:grid-cols-2.lg\\:grid-cols-3')
-                if (featuresSection) {
-                  featuresSection.scrollIntoView({ behavior: 'smooth' })
-                }
-              }}
-              className="w-full sm:w-auto border-2 border-gray-300 hover:border-primary-500 text-gray-700 hover:text-primary-600 px-6 sm:px-8 py-3 text-lg font-medium rounded-lg transition-all duration-200 hover:bg-primary-50"
-            >
-              Learn More
-            </button>
           </div>
 
           {/* Features */}
@@ -130,12 +128,19 @@ export default function HomePage() {
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
               <p className="mt-4 text-gray-600">Loading campaigns...</p>
+              <p className="mt-2 text-sm text-gray-500">Contract: {CONTRACT_ADDRESSES[baseSepolia.id]}</p>
+              <p className="mt-1 text-sm text-gray-500">Network: Base Sepolia (Chain ID: {baseSepolia.id})</p>
             </div>
           )}
 
           {isError && (
             <div className="text-center py-12">
-              <p className="text-red-600">Failed to load campaigns. Please try again.</p>
+              <p className="text-red-600 mb-2">Error loading campaigns</p>
+              <p className="text-sm text-gray-500 mb-4">{error?.message || 'Contract call failed'}</p>
+              <p className="text-gray-600 mb-4">This might be a network connectivity issue.</p>
+              <Link href="/create" className="btn-primary">
+                Create the first campaign!
+              </Link>
             </div>
           )}
 

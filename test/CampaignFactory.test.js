@@ -379,7 +379,7 @@ describe("CampaignFactory", function () {
     });
 
     it("Should return leaderboard sorted by donation amount", async function () {
-      const [donors, amounts, timestamps] = await campaignFactory.getCampaignLeaderboard(campaignId, 10);
+      const [donors, amounts] = await campaignFactory.getCampaignLeaderboard(campaignId, 10);
       
       expect(donors.length).to.equal(2);
       expect(donors[0]).to.equal(donor2.address); // Highest donor first
