@@ -67,7 +67,10 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
             </div>
           </div>
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              console.log('Coffee button clicked!')
+              setIsOpen(true)
+            }}
             className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 flex items-center space-x-2"
           >
             <Coffee className="w-4 h-4" />
@@ -105,7 +108,10 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
   return (
     <>
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          console.log('Support Platform button clicked!')
+          setIsOpen(true)
+        }}
         className={`bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 flex items-center space-x-2 ${className}`}
       >
         <Heart className="w-4 h-4" />
@@ -114,7 +120,7 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
 
       {/* Donation Modal */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
               <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
