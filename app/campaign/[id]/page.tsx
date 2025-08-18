@@ -19,15 +19,15 @@ import { SafeImage } from '../../../components/SafeImage'
 import { ArrowLeft, Users, Target, Calendar, Wallet, Heart } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { validateWalletConnection, handleContractError, handleTransactionSuccess } from '../../../utils/wallet'
-import { generateSimpleDonorSVG } from '../../../utils/nft-generator'
+// import { generateSimpleDonorSVG } from '../../../utils/nft-generator' // Unused
 
 // Helper function to create donor NFT metadata with dynamic image
 async function createDonorNFTMetadata(
   foundCampaign: Campaign,
   donationAmount: string,
   campaignId: string,
-  address: string,
-  sanitizedMessage: string
+  _address: string,
+  _sanitizedMessage: string
 ) {
   // Use the campaign image directly
   const dynamicImage = foundCampaign.imageUri
