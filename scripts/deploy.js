@@ -101,6 +101,22 @@ async function main() {
     console.log("🧹 Fresh contract deployed - no existing campaigns or NFTs!");
     console.log("🚀 You can now test with a completely clean slate.");
     
+    // Auto-update Vercel environment variables
+    if (process.env.VERCEL_TOKEN) {
+      console.log('\n🔄 Auto-updating Vercel environment variables...')
+      try {
+        require('child_process').execSync('node scripts/update-vercel-api.js', { stdio: 'inherit' })
+        console.log('✅ Vercel updated automatically!')
+      } catch (error) {
+        console.log('⚠️ Vercel auto-update failed, update manually')
+        console.log(`🔗 Update NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS to: ${contractAddress}`)
+      }
+    } else {
+      console.log('\n💡 To enable auto-update of Vercel:')
+      console.log('   export VERCEL_TOKEN=[REDACTED-TOKEN]')
+      console.log('   Then run deployment again')
+    }
+    
   } catch (error) {
     console.error("❌ Contract deployment failed:", error.message);
     console.log("💡 Try running: npx hardhat compile");

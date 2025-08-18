@@ -33,7 +33,9 @@
     "vercel:dev": "npm run dev",
     "prepare:staging": "npm run lint && npm run type-check && npm run test",
     "prepare:production": "npm run prepare:staging && npm run security:audit",
-    "setup:deployment": "node scripts/setup-deployment.js"
+    "setup:deployment": "node scripts/setup-deployment.js",
+    "update:vercel": "node scripts/update-vercel-api.js",
+    "deploy:auto": "VERCEL_TOKEN=[REDACTED-TOKEN] npm run deploy:base-sepolia"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.34.0",
