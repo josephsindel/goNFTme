@@ -58,7 +58,7 @@ const faqData: FAQItem[] = [
   },
   {
     question: "Can campaigns be censored or removed?",
-    answer: "No! Once deployed to the blockchain, campaigns cannot be censored, removed, or altered by any central authority. This provides unprecedented freedom for creators and protection against arbitrary platform decisions that plague traditional crowdfunding sites.",
+    answer: "Campaigns can only be paused or removed by the platform administrator in extreme cases (illegal content, etc.). Unlike traditional platforms that can arbitrarily change rules or remove campaigns for business reasons, GoNFTme operates with transparent, consistent policies. Campaign data remains permanently on the blockchain for transparency, and any moderation actions are logged and visible.",
     icon: <Lock className="w-5 h-5 text-red-600" />
   }
 ]

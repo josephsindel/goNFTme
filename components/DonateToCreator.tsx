@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useState, useEffect } from 'react'
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther } from 'viem'
 import { Heart, Coffee, Zap, ExternalLink } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -16,11 +16,20 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
   const [amount, setAmount] = useState('0.001')
   const [isOpen, setIsOpen] = useState(false)
   const { address, isConnected } = useAccount()
-  const { writeContract, data: hash, isPending } = useWriteContract()
+  const { sendTransaction, data: hash, isPending } = useSendTransaction()
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash })
 
   const creatorAddress = '0xe3AecF968f7395192e1fE7fe373f4Af63bE7d756' // joesindel.cb.id resolves to this
   const baseName = 'joesindel.cb.id'
+
+  // Handle transaction confirmation
+  useEffect(() => {
+    if (hash && !isConfirming && !isPending) {
+      toast.success(`Thank you! Donation sent successfully! 🎉`)
+      setIsOpen(false) // Close modal on success
+      setAmount('0.001') // Reset amount
+    }
+  }, [hash, isConfirming, isPending])
 
   const handleDonate = async () => {
     if (!isConnected) {
@@ -32,11 +41,10 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
       const value = parseEther(amount)
       
       // Send ETH directly to the Base name
-      writeContract({
-        to: creatorAddress,
+      sendTransaction({
+        to: creatorAddress as `0x${string}`,
         value,
-        data: '0x', // Empty data for simple ETH transfer
-      } as any)
+      })
 
       toast.success(`Sending ${amount} ETH to ${baseName}...`)
     } catch (error) {
