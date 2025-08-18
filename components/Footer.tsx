@@ -58,7 +58,7 @@ export function Footer() {
                   className="hover:text-white transition-colors flex items-center space-x-2"
                 >
                   <Github className="w-4 h-4" />
-                  <span>GitHub</span>
+                  <span>Open Source</span>
                 </a>
               </li>
               <li>
