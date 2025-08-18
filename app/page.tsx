@@ -10,6 +10,8 @@ import Link from 'next/link'
 import { Plus, Target, Users, Calendar, Award } from 'lucide-react'
 import { ConnectWallet } from '../components/ConnectWallet'
 import { CampaignCard } from '../components/CampaignCard'
+import { DonateToCreator } from '../components/DonateToCreator'
+import { Footer } from '../components/Footer'
 
 export default function HomePage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
@@ -44,6 +46,12 @@ export default function HomePage() {
               <span className="ml-3 text-sm text-gray-500 hidden sm:inline">Web3 Crowdfunding</span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link 
+                href="/faq"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors hidden sm:inline"
+              >
+                FAQ
+              </Link>
               <Link 
                 href="/my-nfts"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm font-medium"
@@ -114,6 +122,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Support Banner */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <DonateToCreator variant="banner" />
+        </div>
+      </section>
+
       {/* Active Campaigns */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -163,16 +178,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-xl font-bold mb-2">GoNFTme</h3>
-          <p className="text-gray-400 mb-4">Web3 Crowdfunding with NFT Rewards</p>
-          <p className="text-sm text-gray-500">
-            Built on Base • Powered by Coinbase • Open Source
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 } 
