@@ -37,9 +37,9 @@ export const config = createConfig({
 })
 
 export const CONTRACT_ADDRESSES = {
-  [base.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0x767E1Cf363102C77e9072BA101F6ac1CA3ec4894',
-  [baseSepolia.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0x767E1Cf363102C77e9072BA101F6ac1CA3ec4894',
-} as const
+  [base.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0xEDa4d4094AD109540f34FF92Bf065cFD5BF6Ff01',
+  [baseSepolia.id]: process.env.NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS || '0xEDa4d4094AD109540f34FF92Bf065cFD5BF6Ff01',
+} as const as const
 
 export const SUPPORTED_CHAINS = [base, baseSepolia]
 
