@@ -6,6 +6,8 @@ import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import AuthProvider from '../components/AuthProvider'
 import PiButton from '../components/PiButton'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -40,6 +42,8 @@ export default function RootLayout({
             </Providers>
           </AuthProvider>
         </ErrorBoundary>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
