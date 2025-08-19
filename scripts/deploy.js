@@ -1,12 +1,7 @@
-import pkg from "hardhat";
-const { ethers } = pkg;
-import dotenv from "dotenv";
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-dotenv.config();
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const { ethers } = require("hardhat");
+require("dotenv").config();
+const fs = require('fs');
+const path = require('path');
 
 async function main() {
   console.log("🚀 Deploying fresh CampaignFactory contract...");
@@ -84,7 +79,7 @@ async function main() {
         console.log("⏳ Waiting for block confirmations...");
         await campaignFactory.deploymentTransaction().wait(5);
         
-        const hre = pkg;
+        const hre = require("hardhat");
         await hre.run("verify:verify", {
           address: contractAddress,
           constructorArguments: [],
@@ -110,7 +105,7 @@ async function main() {
     if (process.env.VERCEL_TOKEN) {
       console.log('\n🔄 Auto-updating Vercel environment variables...')
       try {
-        (await import('child_process')).execSync('node scripts/update-vercel-api.js', { stdio: 'inherit' })
+        require('child_process').execSync('node scripts/update-vercel-api.js', { stdio: 'inherit' })
         console.log('✅ Vercel updated automatically!')
       } catch (error) {
         console.log('⚠️ Vercel auto-update failed, update manually')
