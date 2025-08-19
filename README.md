@@ -186,7 +186,7 @@ GoNFTme is free and open-source. If you find it valuable:
 
 ## 🔗 Links
 
-- **Live Demo**: [gonftme.com](https://go-nft-me-git-main-joesindels-projects.vercel.app/)
+- **Live Demo**: [gonftme.com](https://gonftme.com)
 - **Documentation**: [Technical Architecture](docs/ARCHITECTURE.md)
 - **Smart Contract**: [BaseScan](https://sepolia.basescan.org/address/0x38d0c38EBED03B12f01D94a5117e039129fC2076)
 - **Base Network**: [base.org](https://base.org)

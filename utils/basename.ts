@@ -28,7 +28,7 @@ export async function resolveBaseName(name: string, network: 'base' | 'base-sepo
     // For now, we'll use a hardcoded mapping until we implement full ENS resolution
     // This is because Base names use a different resolution mechanism
     const knownAddresses: Record<string, string> = {
-      'joesindel.cb.id': '0xe3AecF968f7395192e1fE7fe373f4Af63bE7d756', // Your wallet address
+      'joesindel.cb.id': '0xe3AecF968f7395192e1fE7fe373f4Af63bE7d756', // Creator wallet
       // Add more mappings as needed
     }
     

@@ -19,7 +19,7 @@ export function DonateToCreator({ className = '', variant = 'button' }: DonateTo
   const { sendTransaction, data: hash, isPending } = useSendTransaction()
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash })
 
-  const creatorAddress = '0xe3AecF968f7395192e1fE7fe373f4Af63bE7d756' // joesindel.cb.id resolves to this
+  const creatorAddress = '0xe3AecF968f7395192e1fE7fe373f4Af63bE7d756' // joesindel.cb.id
   const baseName = 'joesindel.cb.id'
 
   // Handle transaction confirmation
